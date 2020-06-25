@@ -1,0 +1,7 @@
+AIzaSyD-wP8hzyOsCZaNyry6gl8cwHc5gREL8nY
+
+Configuring credentials for ferriv3ra in project mira-a-honduras
+Google Certificate Fingerprint:     BE:9A:37:94:1B:0F:B9:A1:76:2B:5E:97:84:7C:74:AD:75:0D:58:DB
+Google Certificate Hash (SHA-1):    BE9A37941B0FB9A1762B5E97847C74AD750D58DB
+Google Certificate Hash (SHA-256):  A4D732C93B96DB493F8D14D515FFF3D724EE5A6963516F4DB435A16A2AB81BFC
+Facebook Key Hash:                  vpo3lBsPuaF2K16XhHx0rXUNWNs=

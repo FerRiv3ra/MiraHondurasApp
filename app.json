@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mirahonduras",
-    "slug": "mirahonduras",
+    "name": "Mira a Honduras",
+    "slug": "mira-a-honduras",
     "platforms": [
       "ios",
       "android",
@@ -12,7 +12,7 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
@@ -23,6 +23,23 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "android": {
+      "package": "com.bittech.mirahonduras",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyD-wP8hzyOsCZaNyry6gl8cwHc5gREL8nY"
+        }
+      },
+      "permissions": [
+        "CAMERA_ROLL",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "description": ""
   }
 }
