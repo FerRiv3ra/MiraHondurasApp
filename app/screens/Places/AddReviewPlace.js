@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback, View, Keyboard } from 'react-native';
 import { AirbnbRating, Button, Input } from 'react-native-elements';
 import { verticalScale, scale } from '../../../config/react-native-size';
 import Toast from 'react-native-easy-toast';
@@ -78,10 +78,15 @@ const AddReviewPlace = ({navigation, route}) => {
             })
         })
     }
+
+    const cerrarTeclado = () => {
+        Keyboard.dismiss();
+      }
     
     return (
+        <TouchableWithoutFeedback onPress={() => cerrarTeclado() }>
         <View style={styles.viewBody}>
-            <View style={styles.viewRating}>
+            <View>
                 <AirbnbRating 
                     count={5}
                     reviews={['Malo', 'Regular', 'Bueno', 'Muy bueno', 'Excelente']}
@@ -119,27 +124,23 @@ const AddReviewPlace = ({navigation, route}) => {
                 text='Agregando reseña'
             />
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 
 const styles = StyleSheet.create({
     viewBody: {
         flex: 1,
-    },
-    viewRating: {
-        height: verticalScale(110),
-        backgroundColor: '#F2F2F2'
+        marginHorizontal: '2.5%'
     },
     formReview: {
-        alignItems: 'center',
-        margin: scale(10),
-        marginTop: scale(40)
-    },
+        marginTop: verticalScale(20)
+    },  
     input: {
         marginBottom: verticalScale(10)
     },
     textArea: {
-        height: verticalScale(150),
+        height:150,
         width: '100%',
         padding: 0,
         margin: 0
