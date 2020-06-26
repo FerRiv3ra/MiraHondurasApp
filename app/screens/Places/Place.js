@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { StyleSheet, Dimensions, View, Text } from 'react-native';
-import { Rating, ListItem } from 'react-native-elements';
+import { Rating, ListItem, Icon } from 'react-native-elements';
 import Loading from '../components/Loading';
 import Map from '../components/Map';
 import { useFocusEffect } from '@react-navigation/native';
-
+import Toast from 'react-native-easy-toast';
 import { firebaseApp } from '../../utils/firebase';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -21,6 +21,14 @@ const Place = ({navigation, route}) => {
     
     const [place, setPlace] = useState(null);
     const [rating, setRating] = useState(0);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [userLogged, setUserLogged] = useState(false);
+
+    const toastRef = useRef();
+
+    firebase.auth().onAuthStateChanged((user) => {
+        user ? setUserLogged(true) : setUserLogged(false);
+    });
     
     navigation.setOptions({ title: name });
 
@@ -38,10 +46,78 @@ const Place = ({navigation, route}) => {
         }, [])
     );
 
+    useEffect(() => {
+        if(userLogged && place){
+            db.collection('favorites')
+                .where('idPlace', '==', place.id)
+                .where('idUser', '==', firebase.auth().currentUser.uid)
+                .get()
+                .then((response) => {
+                    if(response.docs.length === 1){
+                        setIsFavorite(true);
+                    }
+                })
+        }
+    }, [userLogged, place]);
+
+    const addFavorite = () => {
+        if(!userLogged){
+            toastRef.current.show('Tienes que iniciar sesión para poder agregar un lugar a favoritos', 2000);
+            return;
+        }
+
+        const payload = {
+            idUser: firebase.auth().currentUser.uid,
+            idPlace: place.id
+        }
+
+        db.collection('favorites')
+            .add(payload)
+            .then(() => {
+                setIsFavorite(true);
+                toastRef.current.show(`${name} agregado a favoritos`, 2000);
+            })
+            .catch(() => {
+                toastRef.current.show('Error al agregar a favoritos, intenta más tarde', 2000);
+            })
+    }
+
+    const removeFavorite = () => {
+        db.collection('favorites')
+            .where('idPlace', '==', place.id)
+            .where('idUser', '==', firebase.auth().currentUser.uid)
+            .get()
+            .then((response) => {
+                response.forEach((doc) => {
+                    const idFavorite = doc.id;
+                    db.collection('favorites')
+                        .doc(idFavorite)
+                        .delete()
+                        .then(() => {
+                            setIsFavorite(false);
+                            toastRef.current.show(`${name} eliminado de favoritos`, 2000);
+                        })
+                        .catch(() => {
+                            toastRef.current.show('Error al eliminar de favoritos, intenta más tarde', 2000);
+                        })
+                });
+            })    
+    }
+
     if(!place) return <Loading isVisible={true} text='Cargando...' />
 
     return (
         <ScrollView vertical style={styles.viewBody}>
+            <View style={styles.viewFavorite}>
+                <Icon 
+                    type='material-community'
+                    name={isFavorite ? 'heart' : 'heart-outline'}
+                    onPress={isFavorite ? removeFavorite : addFavorite}
+                    color={isFavorite ? '#F00' : '#000'}
+                    size={scale(35)}
+                    underlayColor='transparent'
+                />
+            </View>
             <CarouselImage 
                 arrayImages={place.images}
                 height={verticalScale(250)}
@@ -62,6 +138,11 @@ const Place = ({navigation, route}) => {
                 navigation={navigation} 
                 idPlace={place.id}
                 setRating={setRating}
+            />
+            <Toast 
+                ref={toastRef}
+                position='center'
+                opacity={0.9}
             />
         </ScrollView>
     )
@@ -176,6 +257,16 @@ const styles = StyleSheet.create({
     containerListItem: {
         borderBottomColor: '#D8D8D8',
         borderBottomWidth: 1
+    },
+    viewFavorite: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 2,
+        backgroundColor: '#FFF',
+        borderBottomLeftRadius: 100,
+        padding: moderateScale(5),
+        paddingLeft: moderateScale(15)
     }
 });
 
