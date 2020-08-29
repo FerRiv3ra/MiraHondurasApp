@@ -67,13 +67,6 @@ const Navigation = () => {
                     }}
                 />
                 <Tab.Screen 
-                    name='topplaces'
-                    component={TopStack}
-                    options={{
-                        title: 'Top'
-                    }}
-                />
-                <Tab.Screen 
                     name='search'
                     component={SearchStack}
                     options={{
